@@ -92,7 +92,7 @@ onMounted(loadDashboard)
       <article
         v-for="resource in collectionStats"
         :key="resource.key"
-        class="border border-slate-200 bg-white p-5 shadow-sm"
+        class="border border-slate-200 bg-white p-5 shadow-sm rounded"
       >
         <div class="flex items-start justify-between gap-4">
           <div>
