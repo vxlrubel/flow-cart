@@ -1,38 +1,166 @@
-# flow-cart
+# 🛒 Flow Cart
 
-This template should help get you started developing with Vue 3 in Vite.
+**Flow Cart** is a modern, API-based eCommerce Admin Dashboard built using **Vue.js ecosystem tools**. It is designed to be scalable, modular, and easy to integrate with any backend (Laravel, Node.js, Go, etc.).
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🚀 Tech Stack
 
-## Recommended Browser Setup
+- ⚡ **Vue.js 3** – Progressive frontend framework
+- 🧭 **Vue Router** – Client-side routing
+- 📦 **Pinia** – State management
+- 🔗 **Axios** – API communication
+- 🗄️ **JSON Server** – Mock backend API
+- 🎨 **Tailwind CSS** – Utility-first styling (optional)
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Customize configuration
+## 📌 Features
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### 🛍️ Product Management
 
-## Project Setup
+- Add / Edit / Delete products
+- Product variations (size, color, etc.)
+- Stock management
+- SKU support
 
-```sh
+### 🎟️ Coupon & Offers System
+
+- Percentage & fixed discount coupons
+- Category-based coupons
+- Expiry date & usage limit
+- Advanced promotional rules
+
+### 📦 Order Management
+
+- Order listing & filtering
+- Status update (pending, shipped, delivered)
+- Order details view
+
+### 👥 User Management
+
+- Customer list
+- Role-based access (future-ready)
+- Permissions system (extendable)
+
+### 📊 Dashboard Analytics
+
+- Sales overview
+- Revenue stats
+- Order trends
+
+### 🧩 Additional Features
+
+- Soft delete (`deleted_at`)
+- Timestamps (`created_at`, `updated_at`)
+- Modular folder structure
+- API-ready architecture
+
+---
+
+## 📁 Project Structure
+
+```
+flow-cart/
+│
+├── public/
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── layouts/
+│   ├── pages/
+│   ├── router/
+│   ├── stores/        # Pinia stores
+│   ├── services/      # Axios API calls
+│   ├── utils/
+│   └── App.vue
+│
+├── db.json            # JSON Server database
+├── package.json
+└── vite.config.js
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/your-username/flow-cart.git
+cd flow-cart
+```
+
+### 2️⃣ Install dependencies
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### 3️⃣ Run JSON Server (Mock API)
 
-```sh
+```bash
+npx json-server --watch db.json --port 3000
+```
+
+### 4️⃣ Run Vue Development Server
+
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+---
 
-```sh
-npm run build
+## 🌐 API Base URL
+
 ```
+http://localhost:3000
+```
+
+Example endpoints:
+
+- `/products`
+- `/orders`
+- `/users`
+- `/coupons`
+
+---
+
+## 🔄 Future Improvements
+
+- 🔐 Authentication (JWT / Laravel Sanctum)
+- 🧾 Invoice system
+- 📧 Email notifications
+- 📈 Advanced analytics (charts)
+- 🧠 AI-based recommendations
+- 🌍 Multi-language support
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repo
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+This project is open-source and available under the **MIT License**.
+
+---
+
+## 👨‍💻 Author
+
+Developed by **Rubel Mahmud**
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
