@@ -16,7 +16,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+  <div class="border border-slate-200 shadow-sm bg-white p-5">
     <p class="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">{{ label }}</p>
     <p class="mt-3 text-3xl font-semibold text-slate-900">{{ value }}</p>
     <p v-if="detail" class="mt-2 text-sm text-slate-500">{{ detail }}</p>
