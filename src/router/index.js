@@ -1,21 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      redirect: '/admin/dashboard',
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      path: '/admin/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/admin/AdminDashboardView.vue'),
+    },
+    {
+      path: '/admin/:resourceKey',
+      name: 'admin-resource-list',
+      component: () => import('../views/admin/AdminResourceListView.vue'),
+    },
+    {
+      path: '/admin/:resourceKey/new',
+      name: 'admin-resource-create',
+      component: () => import('../views/admin/AdminResourceFormView.vue'),
+    },
+    {
+      path: '/admin/:resourceKey/:id/edit',
+      name: 'admin-resource-edit',
+      component: () => import('../views/admin/AdminResourceFormView.vue'),
     },
   ],
 })
