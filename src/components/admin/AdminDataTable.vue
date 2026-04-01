@@ -1,0 +1,109 @@
+<script setup>
+const props = defineProps({
+  resource: {
+    type: Object,
+    required: true,
+  },
+  rows: {
+    type: Array,
+    required: true,
+  },
+  relationMaps: {
+    type: Object,
+    required: true,
+  },
+})
+
+const emit = defineEmits(['edit', 'archive', 'restore'])
+
+const getFieldConfig = (fieldKey) => props.resource.fields.find((field) => field.key === fieldKey)
+
+const formatCell = (fieldKey, row) => {
+  if (fieldKey === 'updated_at' || fieldKey === 'created_at' || fieldKey === 'deleted_at') {
+    return row[fieldKey] ? new Date(row[fieldKey]).toLocaleString() : 'N/A'
+  }
+
+  if (fieldKey === 'id') {
+    return `#${row.id}`
+  }
+
+  const field = getFieldConfig(fieldKey)
+
+  if (field?.type === 'relation') {
+    const relationMap = props.relationMaps[field.relation] || {}
+    const related = relationMap[row[fieldKey]]
+    return related?.[field.optionLabel] ?? `#${row[fieldKey] ?? 'N/A'}`
+  }
+
+  return row[fieldKey] ?? 'N/A'
+}
+</script>
+
+<template>
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th
+              v-for="fieldKey in resource.tableFields"
+              :key="fieldKey"
+              class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+            >
+              {{ fieldKey.replaceAll('_', ' ') }}
+            </th>
+            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr v-for="row in rows" :key="row.id" class="align-top">
+            <td
+              v-for="fieldKey in resource.tableFields"
+              :key="`${row.id}-${fieldKey}`"
+              class="whitespace-nowrap px-4 py-4 text-sm text-slate-700"
+            >
+              {{ formatCell(fieldKey, row) }}
+            </td>
+            <td class="px-4 py-4 text-right text-sm">
+              <div class="flex justify-end gap-2">
+                <button
+                  type="button"
+                  class="rounded-lg border border-slate-300 px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100"
+                  @click="emit('edit', row)"
+                >
+                  Edit
+                </button>
+                <button
+                  v-if="!row.deleted_at"
+                  type="button"
+                  class="rounded-lg border border-rose-200 px-3 py-2 font-medium text-rose-700 transition hover:bg-rose-50"
+                  @click="emit('archive', row)"
+                >
+                  Archive
+                </button>
+                <button
+                  v-else
+                  type="button"
+                  class="rounded-lg border border-emerald-200 px-3 py-2 font-medium text-emerald-700 transition hover:bg-emerald-50"
+                  @click="emit('restore', row)"
+                >
+                  Restore
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr v-if="rows.length === 0">
+            <td
+              :colspan="resource.tableFields.length + 1"
+              class="px-4 py-10 text-center text-sm text-slate-500"
+            >
+              No records found for the current filter.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
