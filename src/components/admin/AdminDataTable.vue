@@ -12,11 +12,21 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  selectedIds: {
+    type: Array,
+    required: true,
+  },
+  allVisibleSelected: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['edit', 'archive', 'restore'])
+const emit = defineEmits(['edit', 'archive', 'restore', 'toggle-row', 'toggle-all'])
 
 const getFieldConfig = (fieldKey) => props.resource.fields.find((field) => field.key === fieldKey)
+
+const isSelected = (rowId) => props.selectedIds.includes(rowId)
 
 const formatCell = (fieldKey, row) => {
   if (fieldKey === 'updated_at' || fieldKey === 'created_at' || fieldKey === 'deleted_at') {
@@ -45,6 +55,14 @@ const formatCell = (fieldKey, row) => {
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
+            <th class="px-4 py-3 text-left">
+              <input
+                type="checkbox"
+                :checked="allVisibleSelected"
+                class="h-4 w-4 rounded border-slate-300 text-sky-600"
+                @change="emit('toggle-all', $event.target.checked)"
+              />
+            </th>
             <th
               v-for="fieldKey in resource.tableFields"
               :key="fieldKey"
@@ -59,6 +77,14 @@ const formatCell = (fieldKey, row) => {
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr v-for="row in rows" :key="row.id" class="align-top">
+            <td class="px-4 py-4 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                :checked="isSelected(row.id)"
+                class="h-4 w-4 rounded border-slate-300 text-sky-600"
+                @change="emit('toggle-row', { id: row.id, checked: $event.target.checked })"
+              />
+            </td>
             <td
               v-for="fieldKey in resource.tableFields"
               :key="`${row.id}-${fieldKey}`"
@@ -96,7 +122,7 @@ const formatCell = (fieldKey, row) => {
           </tr>
           <tr v-if="rows.length === 0">
             <td
-              :colspan="resource.tableFields.length + 1"
+              :colspan="resource.tableFields.length + 2"
               class="px-4 py-10 text-center text-sm text-slate-500"
             >
               No records found for the current filter.
