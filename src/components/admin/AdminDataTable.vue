@@ -50,12 +50,12 @@ const formatCell = (fieldKey, row) => {
 </script>
 
 <template>
-  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-4 py-3 text-left">
+            <th class="px-3 py-4 text-left w-[40px]">
               <input
                 type="checkbox"
                 :checked="allVisibleSelected"
@@ -70,14 +70,16 @@ const formatCell = (fieldKey, row) => {
             >
               {{ fieldKey.replaceAll('_', ' ') }}
             </th>
-            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <th
+              class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
+            >
               Actions
             </th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr v-for="row in rows" :key="row.id" class="align-top">
-            <td class="px-4 py-4 text-sm text-slate-700">
+            <td class="px-3 py-4 text-left w-[40px]">
               <input
                 type="checkbox"
                 :checked="isSelected(row.id)"
