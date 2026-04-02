@@ -37,7 +37,13 @@ const pageTitle = computed(() => {
 })
 
 const loadRelationOptions = async () => {
-  const relationKeys = [...new Set(resource.value.fields.filter((field) => field.type === 'relation').map((field) => field.relation))]
+  const relationKeys = [
+    ...new Set(
+      resource.value.fields
+        .filter((field) => field.type === 'relation')
+        .map((field) => field.relation),
+    ),
+  ]
   const entries = await Promise.all(
     relationKeys.map(async (resourceKey) => {
       const options = await fetchCollection(resourceKey)
@@ -111,25 +117,30 @@ watch(
 
 <template>
   <section v-if="resource" class="space-y-6">
-    <div class="flex flex-col gap-4 rounded-3xl bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between">
+    <div
+      class="flex flex-col gap-4 rounded shadow-sm lg:flex-row lg:items-end lg:justify-between bg-linear-to-r from-sky-600 via-cyan-600 to-teal-600 p-6 text-white"
+    >
       <div>
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-sky-100">
           {{ isEditMode ? 'Edit Record' : 'Create Record' }}
         </p>
-        <h1 class="mt-2 text-3xl font-semibold text-slate-900">{{ pageTitle }}</h1>
-        <p class="mt-2 max-w-2xl text-sm text-slate-500">
+        <h1 class="mt-3 text-2xl capitalize font-semibold">{{ pageTitle }}</h1>
+        <p class="mt-3 max-w-3xl text-sm text-sky-50">
           {{ resource.description }}
         </p>
       </div>
       <RouterLink
         :to="`/admin/${resource.key}`"
-        class="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+        class="rounded h-8 text-slate-900 px-4 inline-flex items-center justify-center text-sm font-semibold bg-white transition hover:bg-gray-100"
       >
         Back to {{ resource.label }}
       </RouterLink>
     </div>
 
-    <div v-if="errorMessage" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+    <div
+      v-if="errorMessage"
+      class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+    >
       {{ errorMessage }}
     </div>
 

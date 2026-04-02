@@ -411,7 +411,7 @@ onMounted(async () => {
 <template>
   <section v-if="resource" class="space-y-6">
     <div
-      class="flex flex-col gap-4 rounded bg-white p-6 shadow-sm lg:flex-row lg:items-end lg:justify-between bg-linear-to-r from-sky-600 via-cyan-600 to-teal-600 p-6 text-white"
+      class="flex flex-col gap-4 rounded shadow-sm lg:flex-row lg:items-end lg:justify-between bg-linear-to-r from-sky-600 via-cyan-600 to-teal-600 p-6 text-white"
     >
       <div>
         <p class="text-sm font-semibold uppercase tracking-[0.24em] text-sky-100">Collection</p>
@@ -442,7 +442,7 @@ onMounted(async () => {
           v-model="searchTerm"
           type="search"
           placeholder="Filter current table..."
-          class="mt-2 w-full rounded border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+          class="mt-2 w-full rounded border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
         />
       </div>
     </div>
@@ -455,7 +455,7 @@ onMounted(async () => {
         <select
           id="product-category-filter"
           v-model="productCategoryFilter"
-          class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+          class="mt-2 w-full rounded border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
         >
           <option value="">All categories</option>
           <option
@@ -474,7 +474,7 @@ onMounted(async () => {
         <select
           id="product-date-filter"
           v-model="productDateFilter"
-          class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+          class="mt-2 w-full rounded border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
         >
           <option
             v-for="option in productDateOptions"
@@ -490,7 +490,7 @@ onMounted(async () => {
         <select
           id="product-sort"
           v-model="productSort"
-          class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+          class="mt-2 w-full rounded border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
         >
           <option
             v-for="option in productSortOptions"
