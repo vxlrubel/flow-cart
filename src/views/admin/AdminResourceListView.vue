@@ -594,7 +594,7 @@ onMounted(async () => {
           v-for="page in totalPages"
           :key="page"
           type="button"
-          class="rounded px-3 py-2 text-sm font-medium transition"
+          class="rounded px-3 py-2 text-sm font-medium transition cursor-pointer"
           :class="
             page === currentPage
               ? 'bg-slate-900 text-white'
@@ -606,7 +606,7 @@ onMounted(async () => {
         </button>
         <button
           type="button"
-          class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+          class="rounded-lg border cursor-pointer border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
           :disabled="currentPage === totalPages"
           @click="goToPage(currentPage + 1)"
         >

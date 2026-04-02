@@ -57,8 +57,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-06T14:20:00Z",
-      "updated_at": "2026-01-06T14:20:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:56:36.514Z",
+      "deleted_at": "2026-04-02T18:56:36.514Z"
     },
     {
       "id": "7",
@@ -67,8 +67,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-07T16:45:00Z",
-      "updated_at": "2026-01-07T16:45:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:55:49.398Z",
+      "deleted_at": "2026-04-02T18:55:49.398Z"
     },
     {
       "id": "8",
@@ -77,8 +77,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-08T10:10:00Z",
-      "updated_at": "2026-01-08T10:10:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:55:40.704Z",
+      "deleted_at": "2026-04-02T18:55:40.704Z"
     },
     {
       "id": "9",
@@ -87,8 +87,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-09T12:00:00Z",
-      "updated_at": "2026-01-09T12:00:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "10",
@@ -97,8 +97,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-10T13:30:00Z",
-      "updated_at": "2026-01-10T13:30:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "11",
@@ -107,8 +107,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-11T09:00:00Z",
-      "updated_at": "2026-01-11T09:00:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "12",
@@ -117,8 +117,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-12T15:20:00Z",
-      "updated_at": "2026-01-12T15:20:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "13",
@@ -127,8 +127,8 @@
       "password": "hashed_password",
       "role_id": 1,
       "created_at": "2026-01-01T10:00:00Z",
-      "updated_at": "2026-01-01T10:00:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "14",
@@ -137,8 +137,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-14T08:45:00Z",
-      "updated_at": "2026-01-14T08:45:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:45:39.451Z",
+      "deleted_at": "2026-04-02T18:45:39.449Z"
     },
     {
       "id": "15",
@@ -147,8 +147,8 @@
       "password": "hashed_password",
       "role_id": 2,
       "created_at": "2026-01-15T17:00:00Z",
-      "updated_at": "2026-01-15T17:00:00Z",
-      "deleted_at": null
+      "updated_at": "2026-04-02T18:55:38.165Z",
+      "deleted_at": "2026-04-02T18:55:38.165Z"
     }
   ],
   "roles": [

@@ -55,7 +55,7 @@ const formatCell = (fieldKey, row) => {
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
-            <th class="px-3 py-4 text-left w-[40px]">
+            <th class="px-3 pt-2 text-left w-[40px]">
               <input
                 type="checkbox"
                 :checked="allVisibleSelected"
@@ -79,7 +79,7 @@ const formatCell = (fieldKey, row) => {
         </thead>
         <tbody class="divide-y divide-slate-200">
           <tr v-for="row in rows" :key="row.id" class="align-top">
-            <td class="px-3 py-4 text-left w-[40px]">
+            <td class="px-3 pt-4 text-left w-[40px]">
               <input
                 type="checkbox"
                 :checked="isSelected(row.id)"
@@ -98,7 +98,7 @@ const formatCell = (fieldKey, row) => {
               <div class="flex justify-end gap-2">
                 <button
                   type="button"
-                  class="rounded-lg border border-slate-300 px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100"
+                  class="rounded border border-slate-300 px-3 h-8 inline-flex items-center justify-center cursor-pointer font-medium text-slate-700 transition hover:bg-slate-100"
                   @click="emit('edit', row)"
                 >
                   Edit
@@ -106,7 +106,7 @@ const formatCell = (fieldKey, row) => {
                 <button
                   v-if="!row.deleted_at"
                   type="button"
-                  class="rounded-lg border border-rose-200 px-3 py-2 font-medium text-rose-700 transition hover:bg-rose-50"
+                  class="rounded border border-rose-200 px-3 h-8 inline-flex items-center justify-center cursor-pointer font-medium text-rose-700 transition hover:bg-rose-50"
                   @click="emit('archive', row)"
                 >
                   Archive
@@ -114,7 +114,7 @@ const formatCell = (fieldKey, row) => {
                 <button
                   v-else
                   type="button"
-                  class="rounded-lg border border-emerald-200 px-3 py-2 font-medium text-emerald-700 transition hover:bg-emerald-50"
+                  class="rounded border border-emerald-200 px-3 h-8 inline-flex items-center justify-center cursor-pointer font-medium text-emerald-700 transition hover:bg-emerald-50"
                   @click="emit('restore', row)"
                 >
                   Restore
