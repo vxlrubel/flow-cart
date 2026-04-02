@@ -3,11 +3,17 @@ import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AdminStatCard from '@/components/admin/AdminStatCard.vue'
 import { adminResources } from '@/config/admin'
-import { fetchCollection } from '@/services/api'
+import { fetchDashboardStats } from '@/services/api'
 
 const loading = ref(true)
 const errorMessage = ref('')
 const collectionStats = ref([])
+
+const dashboardResources = adminResources.map(({ key, label, description }) => ({
+  key,
+  label,
+  description,
+}))
 
 const totalActiveRecords = computed(() =>
   collectionStats.value.reduce((total, item) => total + item.activeCount, 0),
@@ -22,26 +28,7 @@ const loadDashboard = async () => {
   errorMessage.value = ''
 
   try {
-    const stats = await Promise.all(
-      adminResources.map(async (resource) => {
-        const records = await fetchCollection(resource.key)
-        const activeCount = records.filter((record) => !record.deleted_at).length
-        const archivedCount = records.length - activeCount
-
-        return {
-          ...resource,
-          activeCount,
-          archivedCount,
-          latestUpdatedAt: records
-            .map((record) => record.updated_at)
-            .filter(Boolean)
-            .sort()
-            .at(-1),
-        }
-      }),
-    )
-
-    collectionStats.value = stats
+    collectionStats.value = await fetchDashboardStats(dashboardResources)
   } catch (error) {
     errorMessage.value = error.message || 'Failed to load dashboard data.'
   } finally {

@@ -9,7 +9,13 @@ import {
   preparePayload,
   singularizeLabel,
 } from '@/config/admin'
-import { createRecord, fetchCollection, fetchRecord, updateRecord } from '@/services/api'
+import {
+  createRecord,
+  fetchCollection,
+  fetchRecord,
+  fetchRelationOptions,
+  updateRecord,
+} from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,21 +42,42 @@ const pageTitle = computed(() => {
   return `Edit ${formatPrimaryValue(resource.value, existingRecord.value)}`
 })
 
-const loadRelationOptions = async () => {
-  const relationKeys = [
-    ...new Set(
-      resource.value.fields
-        .filter((field) => field.type === 'relation')
-        .map((field) => field.relation),
-    ),
-  ]
-  const entries = await Promise.all(
-    relationKeys.map(async (resourceKey) => {
-      const options = await fetchCollection(resourceKey)
-      return [resourceKey, options.filter((record) => !record.deleted_at)]
-    }),
-  )
-  relationOptions.value = Object.fromEntries(entries)
+const getRelationKeys = () => [
+  ...new Set(
+    resource.value.fields
+      .filter((field) => field.type === 'relation')
+      .map((field) => field.relation),
+  ),
+]
+
+const loadRelationOptions = async (baseRows = null) => {
+  const relationKeys = getRelationKeys()
+  const ownResourceKey = resource.value.key
+  const externalRelationKeys = relationKeys.filter((relationKey) => relationKey !== ownResourceKey)
+  const nextRelationOptions = {}
+
+  if (relationKeys.includes(ownResourceKey) && Array.isArray(baseRows)) {
+    nextRelationOptions[ownResourceKey] = baseRows.filter((record) => !record.deleted_at)
+  }
+
+  if (externalRelationKeys.length > 0) {
+    Object.assign(nextRelationOptions, await fetchRelationOptions(externalRelationKeys))
+  }
+
+  relationOptions.value = nextRelationOptions
+}
+
+const applyFormState = (record = null) => {
+  existingRecord.value = record
+  formState.value = buildEmptyRecord(resource.value)
+
+  if (!record) {
+    return
+  }
+
+  resource.value.fields.forEach((field) => {
+    formState.value[field.key] = record[field.key] ?? ''
+  })
 }
 
 const loadPage = async () => {
@@ -63,19 +90,28 @@ const loadPage = async () => {
   errorMessage.value = ''
 
   try {
-    await loadRelationOptions()
+    const relationKeys = getRelationKeys()
+    const needsOwnCollection = relationKeys.includes(resource.value.key)
 
     if (isEditMode.value) {
-      const record = await fetchRecord(resource.value.key, route.params.id)
-      existingRecord.value = record
-      formState.value = buildEmptyRecord(resource.value)
+      const requests = [fetchRecord(resource.value.key, route.params.id)]
 
-      resource.value.fields.forEach((field) => {
-        formState.value[field.key] = record[field.key] ?? ''
-      })
+      if (needsOwnCollection) {
+        requests.push(fetchCollection(resource.value.key))
+      }
+
+      const [record, ownCollection = null] = await Promise.all(requests)
+      await loadRelationOptions(ownCollection)
+      applyFormState(record)
     } else {
-      existingRecord.value = null
-      formState.value = buildEmptyRecord(resource.value)
+      let ownCollection = null
+
+      if (needsOwnCollection) {
+        ownCollection = await fetchCollection(resource.value.key)
+      }
+
+      await loadRelationOptions(ownCollection)
+      applyFormState()
     }
   } catch (error) {
     errorMessage.value = error.message || 'Failed to load record.'

@@ -3,13 +3,19 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AdminDataTable from '@/components/admin/AdminDataTable.vue'
 import { getResourceConfig, singularizeLabel } from '@/config/admin'
-import { fetchCollection, patchRecord } from '@/services/api'
+import {
+  fetchCollection,
+  fetchRelationOptions,
+  filterRecordsInWorker,
+  patchRecord,
+} from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 const errorMessage = ref('')
 const records = ref([])
+const filteredRows = ref([])
 const relationOptions = ref({})
 const showArchived = ref(false)
 const searchTerm = ref('')
@@ -50,75 +56,6 @@ const relationMaps = computed(() =>
   ),
 )
 
-const productFilteredRows = (rows) => {
-  if (!isProductListing.value) {
-    return rows
-  }
-
-  let nextRows = [...rows]
-
-  if (productCategoryFilter.value) {
-    nextRows = nextRows.filter(
-      (record) => String(record.category_id) === productCategoryFilter.value,
-    )
-  }
-
-  if (productDateFilter.value) {
-    const now = new Date()
-    nextRows = nextRows.filter((record) => {
-      if (!record.created_at) {
-        return false
-      }
-
-      const createdAt = new Date(record.created_at)
-
-      if (productDateFilter.value === 'today') {
-        return createdAt.toDateString() === now.toDateString()
-      }
-
-      const diffInDays = (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24)
-
-      if (productDateFilter.value === 'last7') {
-        return diffInDays <= 7
-      }
-
-      if (productDateFilter.value === 'last30') {
-        return diffInDays <= 30
-      }
-
-      return true
-    })
-  }
-
-  if (productSort.value === 'name_asc') {
-    nextRows.sort((left, right) => String(left.name ?? '').localeCompare(String(right.name ?? '')))
-  } else if (productSort.value === 'name_desc') {
-    nextRows.sort((left, right) => String(right.name ?? '').localeCompare(String(left.name ?? '')))
-  } else if (productSort.value === 'price_desc') {
-    nextRows.sort((left, right) => Number(right.price ?? 0) - Number(left.price ?? 0))
-  } else if (productSort.value === 'price_asc') {
-    nextRows.sort((left, right) => Number(left.price ?? 0) - Number(right.price ?? 0))
-  }
-
-  return nextRows
-}
-
-const filteredRows = computed(() => {
-  const rows = records.value.filter((record) => showArchived.value || !record.deleted_at)
-  const term = searchTerm.value.trim().toLowerCase()
-  const searchedRows = !term
-    ? rows
-    : rows.filter((record) =>
-        resource.value.tableFields.some((fieldKey) =>
-          String(record[fieldKey] ?? '')
-            .toLowerCase()
-            .includes(term),
-        ),
-      )
-
-  return productFilteredRows(searchedRows)
-})
-
 const activeCount = computed(() => records.value.filter((record) => !record.deleted_at).length)
 const archivedCount = computed(() => records.value.filter((record) => record.deleted_at).length)
 const totalPages = computed(() => Math.max(1, Math.ceil(filteredRows.value.length / perPage.value)))
@@ -155,6 +92,14 @@ const normalizePerPage = (value) => {
   const parsed = Number.parseInt(String(value ?? defaultPerPage), 10)
   return perPageOptions.includes(parsed) ? parsed : defaultPerPage
 }
+
+const getRelationKeys = () => [
+  ...new Set(
+    resource.value.fields
+      .filter((field) => field.type === 'relation')
+      .map((field) => field.relation),
+  ),
+]
 
 const applyQueryState = () => {
   syncingFromRoute.value = true
@@ -238,21 +183,58 @@ const ensureResource = () => {
   return true
 }
 
-const loadRelationOptions = async () => {
-  const relationKeys = [
-    ...new Set(
-      resource.value.fields
-        .filter((field) => field.type === 'relation')
-        .map((field) => field.relation),
-    ),
-  ]
-  const entries = await Promise.all(
-    relationKeys.map(async (resourceKey) => {
-      const options = await fetchCollection(resourceKey)
-      return [resourceKey, options.filter((record) => !record.deleted_at)]
-    }),
-  )
-  relationOptions.value = Object.fromEntries(entries)
+let filterRequestId = 0
+
+const updateFilteredRows = async () => {
+  if (!resource.value) {
+    filteredRows.value = []
+    return
+  }
+
+  const requestId = ++filterRequestId
+
+  try {
+    const nextRows = await filterRecordsInWorker({
+      records: records.value,
+      tableFields: resource.value.tableFields,
+      showArchived: showArchived.value,
+      searchTerm: searchTerm.value,
+      isProductListing: isProductListing.value,
+      productCategoryFilter: productCategoryFilter.value,
+      productDateFilter: productDateFilter.value,
+      productSort: productSort.value,
+      nowIso: new Date().toISOString(),
+    })
+
+    if (requestId !== filterRequestId) {
+      return
+    }
+
+    filteredRows.value = nextRows
+  } catch (error) {
+    if (requestId !== filterRequestId) {
+      return
+    }
+
+    errorMessage.value = error.message || 'Failed to filter records.'
+  }
+}
+
+const loadRelationOptions = async (baseRows = null) => {
+  const relationKeys = getRelationKeys()
+  const ownResourceKey = resource.value.key
+  const externalRelationKeys = relationKeys.filter((relationKey) => relationKey !== ownResourceKey)
+  const nextRelationOptions = {}
+
+  if (relationKeys.includes(ownResourceKey) && Array.isArray(baseRows)) {
+    nextRelationOptions[ownResourceKey] = baseRows.filter((record) => !record.deleted_at)
+  }
+
+  if (externalRelationKeys.length > 0) {
+    Object.assign(nextRelationOptions, await fetchRelationOptions(externalRelationKeys))
+  }
+
+  relationOptions.value = nextRelationOptions
 }
 
 const loadRecords = async () => {
@@ -264,10 +246,11 @@ const loadRecords = async () => {
   errorMessage.value = ''
 
   try {
-    const [rows] = await Promise.all([fetchCollection(resource.value.key), loadRelationOptions()])
-    records.value = rows.sort((left, right) => Number(right.id) - Number(left.id))
-    clearHiddenSelections()
-    clampCurrentPage()
+    const rows = await fetchCollection(resource.value.key)
+    const sortedRows = rows.sort((left, right) => Number(right.id) - Number(left.id))
+
+    records.value = sortedRows
+    await loadRelationOptions(sortedRows)
   } catch (error) {
     errorMessage.value = error.message || 'Failed to load records.'
   } finally {
@@ -382,6 +365,14 @@ watch(filteredRows, () => {
   clearHiddenSelections()
   clampCurrentPage()
 })
+
+watch(
+  [records, searchTerm, showArchived, productCategoryFilter, productDateFilter, productSort, resource],
+  () => {
+    updateFilteredRows()
+  },
+  { immediate: true },
+)
 
 watch([searchTerm, showArchived, productCategoryFilter, productDateFilter, productSort], () => {
   if (syncingFromRoute.value) {
